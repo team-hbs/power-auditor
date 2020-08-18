@@ -2,9 +2,9 @@ import {IInputs, IOutputs} from "./generated/ManifestTypes";
 
 export class PowerAuditor implements ComponentFramework.StandardControl<IInputs, IOutputs> {
 
-	private iframe: HTMLIFrameElement;
-	private _container: HTMLDivElement;
-	private rendered: boolean;
+	private iframe: HTMLIFrameElement; // The iframe element to trigger audit event
+	private _container: HTMLDivElement;  // The container the component is stored in
+	private rendered: boolean; // Whether the iframe is currently rendered
 
 	/**
 	 * Empty constructor.
@@ -23,12 +23,16 @@ export class PowerAuditor implements ComponentFramework.StandardControl<IInputs,
 	 * @param container If a control is marked control-type='standard', it will receive an empty div element within which it can render its content.
 	 */
 	public init(context: ComponentFramework.Context<IInputs>, notifyOutputChanged: () => void, state: ComponentFramework.Dictionary, container:HTMLDivElement)
-	{
+	{	
+		// Store the container
 		this._container  = container;
 
+		// Check if render is set to true or false
 		if (context.parameters.render.raw) {
+			// Render the iframe
 			this.iframe = document.createElement("iframe");
-
+			
+			// Check if a src is given
 			if(context.parameters.src.raw) {
 				this.iframe.src = context.parameters.src.raw;
 			}
@@ -37,6 +41,7 @@ export class PowerAuditor implements ComponentFramework.StandardControl<IInputs,
 			this.iframe.height ="200";
 			this.iframe.frameBorder = "0";
 
+			// Add the iframe to the container
 			this._container.appendChild(this.iframe);
 			this.rendered = true;
 		} else {
@@ -51,23 +56,29 @@ export class PowerAuditor implements ComponentFramework.StandardControl<IInputs,
 	 */
 	public updateView(context: ComponentFramework.Context<IInputs>): void
 	{
+		// Check if render is set to true or false
 		if (context.parameters.render.raw) {
+			// Check that there is not already an iframe render before rendering a new one
 			if (this.rendered == false) {
+				// Render the iframe
 				this.iframe = document.createElement("iframe");
 
 				this.iframe.width = "200";
 				this.iframe.height ="200";
 				this.iframe.frameBorder = "0";
 
+				// Add the iframe to the container
 				this._container.appendChild(this.iframe);
 			}
 
+			// Check if a src is given
 			if( context.parameters.src.raw) {
 				this.iframe.src = context.parameters.src.raw;
 			}
 			
 			this.rendered = true;
 		} else {
+			// Check if an iframe is currently rendered before removing it
 			if (this.rendered == true) {
 				this.iframe.remove();
 			}
