@@ -2,6 +2,10 @@ import {IInputs, IOutputs} from "./generated/ManifestTypes";
 
 export class PowerAuditor implements ComponentFramework.StandardControl<IInputs, IOutputs> {
 
+	private iframe: HTMLIFrameElement;
+	private _container: HTMLDivElement;
+	private rendered: boolean;
+
 	/**
 	 * Empty constructor.
 	 */
@@ -20,7 +24,24 @@ export class PowerAuditor implements ComponentFramework.StandardControl<IInputs,
 	 */
 	public init(context: ComponentFramework.Context<IInputs>, notifyOutputChanged: () => void, state: ComponentFramework.Dictionary, container:HTMLDivElement)
 	{
-		// Add control initialization code
+		this._container  = container;
+
+		if (context.parameters.render.raw) {
+			this.iframe = document.createElement("iframe");
+
+			if(context.parameters.src.raw) {
+				this.iframe.src = context.parameters.src.raw;
+			}
+
+			this.iframe.width = "200";
+			this.iframe.height ="200";
+			this.iframe.frameBorder = "0";
+
+			this._container.appendChild(this.iframe);
+			this.rendered = true;
+		} else {
+			this.rendered = false;
+		}
 	}
 
 
@@ -30,7 +51,29 @@ export class PowerAuditor implements ComponentFramework.StandardControl<IInputs,
 	 */
 	public updateView(context: ComponentFramework.Context<IInputs>): void
 	{
-		// Add code to update control view
+		if (context.parameters.render.raw) {
+			if (this.rendered == false) {
+				this.iframe = document.createElement("iframe");
+
+				this.iframe.width = "200";
+				this.iframe.height ="200";
+				this.iframe.frameBorder = "0";
+
+				this._container.appendChild(this.iframe);
+			}
+
+			if( context.parameters.src.raw) {
+				this.iframe.src = context.parameters.src.raw;
+			}
+			
+			this.rendered = true;
+		} else {
+			if (this.rendered == true) {
+				this.iframe.remove();
+			}
+
+			this.rendered = false;
+		}
 	}
 
 	/** 
